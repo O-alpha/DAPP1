@@ -36,14 +36,21 @@
                         
         </div>
         <div>
-            <button onclick="createnewtask()">Create Task</button>
+            <button onclick="createnewtask()">Create Task</button> <br />
         </div>
         <div>
             <label for="ind">Delete Task</label> <br />
             <input type="number" id="ind" />                        
         </div>
         <div>
-            <button onclick = "deletetast()">Delete Task</button>
+            <button onclick = "deletetast()">Delete Task</button> <br />
+        </div>
+        <div>
+            <label for="totalno">Tasks in List</label> <br />
+                                   
+        </div>
+        <div>
+            <button onclick = "gettotaltasks()">Total Tasks</button> <br />
         </div>
         <div>
             <label for="upd">Update Task</label> <br />
@@ -53,7 +60,14 @@
                         
         </div>
         <div>
-            <button onclick = "updatetask()">Update Task</button>
+            <button onclick = "updatetask()">Update Task</button> <br />
+        </div>
+        <div>
+            <label for="task">View Task</label> <br />   
+            <input type="number" id="ind" />                     
+        </div>
+        <div>
+            <button onclick = "printtask()">View Task</button> <br />
         </div>
     </body>
     <script
@@ -68,7 +82,7 @@
             web3.currentProvider, 
             "ropsten"
         ); //Web3 provider -> MetaMask
-        var todoContractAddress = "0x17d33c2dDe66Ec42d8b60B1390E0601feF0a079D";
+        var todoContractAddress = "0xe5dff0ad1406829AE80326b2656f9F1dCAA34c65";
         var todoContractABI = [
 	{
 		"inputs": [
@@ -105,6 +119,47 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
+				"name": "taskin",
+				"type": "uint256"
+			}
+		],
+		"name": "printtask",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "task",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "descrip",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "timeofcreation",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "createdby",
+						"type": "address"
+					}
+				],
+				"internalType": "struct ToDoList.todo",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
 				"name": "taskind",
 				"type": "uint256"
 			},
@@ -122,6 +177,19 @@
 		"name": "updatetask",
 		"outputs": [],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "gettotaltasks",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	}
 ];
@@ -157,8 +225,17 @@
             //id -> HTML elemenet ->input
             //getElementbyId -> input of a certain id
             //cus we'll be getting multile ids
-            deletTask = todoContract.deletetast(index);
-            await deletTask;
+            let getnum = todoContract.gettotaltasks(); 
+            var num = await getnum;
+            if(num <= index)
+               console.log("Invalid Transaction!");
+            else
+            {
+                deletTask = todoContract.deletetast(index);
+                await deletTask;
+            }
+               
+            
             
         }
         async function updatetask()
@@ -166,9 +243,43 @@
             let index = document.getElementById("ind").value;
             let task = document.getElementById("task").value;
             let desc = document.getElementById("desc").value;
-            updateTask = todoContract.updatetask(index,task,desc);
-            await updateTask;
+            let getnum = todoContract.gettotaltasks(); 
+            var num = await getnum;
+            //function's existence in contract is told by ABI
+            if(num<= index)
+               console.log("Invalid Transaction!");
+            else
+            {
+                updateTask = todoContract.updatetask(index,task,desc);
+                await updateTask;
+            }
+               
             
+        }
+
+        async function gettotaltasks()
+        {
+            getcount = todoContract.gettotaltasks();
+            
+            //function's existence in contract is told by ABI
+            var d = await getcount;
+            var x = parseInt(d);
+            /*var x = count[0];
+            var d = parseFloat(x);
+            const hextodec = hex => parseInt(hex, 16);
+
+            count = hextodec(d);*/
+            //we can call multiple transactions together, but 
+            //waiting makes it a lil faster
+            //good practice, not necessary tho
+            console.log(d);
+        }
+        async function printtask()
+        {
+            let index = document.getElementById("ind").value;
+            let lis = todoContract.printtask(index);
+            var lis1 = await lis;
+            console.log(lis1);
         }
     </script>      
 </html>
