@@ -225,15 +225,15 @@
             //id -> HTML elemenet ->input
             //getElementbyId -> input of a certain id
             //cus we'll be getting multile ids
-            let getnum = todoContract.gettotaltasks(); 
+            /*let getnum = todoContract.gettotaltasks(); 
             var num = await getnum;
             if(num <= index)
                console.log("Invalid Transaction!");
             else
-            {
+            {*/
                 deletTask = todoContract.deletetast(index);
                 await deletTask;
-            }
+            //}
                
             
             
@@ -243,16 +243,16 @@
             let index = document.getElementById("ind").value;
             let task = document.getElementById("task").value;
             let desc = document.getElementById("desc").value;
-            let getnum = todoContract.gettotaltasks(); 
+            /*let getnum = todoContract.gettotaltasks(); 
             var num = await getnum;
             //function's existence in contract is told by ABI
             if(num<= index)
                console.log("Invalid Transaction!");
             else
-            {
+            {*/
                 updateTask = todoContract.updatetask(index,task,desc);
                 await updateTask;
-            }
+            //}
                
             
         }
