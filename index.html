@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content ="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>To Do List</title>
+        <style>
+            body {
+                text-align: center;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            div {
+                width: 20%;
+                margin: 0 auto;
+                display: flex;
+                flex-direction: column;
+            }
+            button {
+                width: 100%;
+                margin: 10px 0px 5px 0px;
+            }
+        </style>
+        <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@0.18.2/dist/web3.min.js"></script>
+        <!--<script src = "./block.js"></script>-->
+    </head>
+    <body>
+        <div>
+            <h1> TO DO LIST</h1>
+            <p>Create, Update and Delete daily tasks -</p>
+        </div>
+        <div>
+            <label for="create">Create Task</label> <br />
+            <input type="text" id="task" />
+            <input type="text" id="desc" />
+                        
+        </div>
+        <div>
+            <button onclick="createnewtask()">Create Task</button>
+        </div>
+        <div>
+            <label for="ind">Delete Task</label> <br />
+            <input type="number" id="ind" />                        
+        </div>
+        <div>
+            <button onclick = "deletetast()">Delete Task</button>
+        </div>
+        <div>
+            <label for="upd">Update Task</label> <br />
+            <input type="number" id="ind" />
+            <input type="text" id="task" />
+            <input type="text" id="desc" />
+                        
+        </div>
+        <div>
+            <button onclick = "updatetask()">Update Task</button>
+        </div>
+    </body>
+    <script
+        charset = "utf-8"
+        src = "https://cdn.ethers.io/scripts/ethers-v4.min.js"
+        type = "text/javascript"
+    ></script>
+    <script>
+        window.ethereum.enable();
+        //detects if i have a wallet ->remix also does that
+        var provider = new ethers.providers.Web3Provider(
+            web3.currentProvider, 
+            "ropsten"
+        ); //Web3 provider -> MetaMask
+        var todoContractAddress = "0x17d33c2dDe66Ec42d8b60B1390E0601feF0a079D";
+        var todoContractABI = [
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_task",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_descrip",
+				"type": "string"
+			}
+		],
+		"name": "createnewtask",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "taskind",
+				"type": "uint256"
+			}
+		],
+		"name": "deletetast",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "taskind",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_desc",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			}
+		],
+		"name": "updatetask",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+];
+        var todoContract;
+        var signer;
+
+        //func to use the provider
+        provider.listAccounts().then(function(accounts) //getting acc
+        {
+            signer = provider.getSigner(accounts[0]);
+            todoContract = new ethers.Contract(
+                todoContractAddress,
+                todoContractABI,
+                signer
+            );
+            //in this above function, im gonna get the signer
+            //from the acc to tell the contract that you're the one
+            //signing the contract -> getting your signature 
+            //gets the contract adderss + ABI + signer
+            //makes it unique :D
+        });
+        async function createnewtask()
+        {
+            let task = document.getElementById("task").value;
+            let desc = document.getElementById("desc").value;
+            //function's existence in contract is told by ABI
+            createTask = todoContract.createnewtask(task,desc);
+           await createTask;
+        }
+        async function deletetast()
+        {
+            let index = document.getElementById("ind").value;
+            //id -> HTML elemenet ->input
+            //getElementbyId -> input of a certain id
+            //cus we'll be getting multile ids
+            deletTask = todoContract.deletetast(index);
+            await deletTask;
+            
+        }
+        async function updatetask()
+        {
+            let index = document.getElementById("ind").value;
+            let task = document.getElementById("task").value;
+            let desc = document.getElementById("desc").value;
+            updateTask = todoContract.updatetask(index,task,desc);
+            await updateTask;
+            
+        }
+    </script>      
+</html>
