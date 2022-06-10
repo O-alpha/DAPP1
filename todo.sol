@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+//SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4; //>= version 0.8.4
 
 contract ToDoList {
@@ -28,6 +28,7 @@ contract ToDoList {
         obj.timeofcreation = block.timestamp;
         obj.createdby = msg.sender; 
         arr.push(obj);
+        
         //mood = _mood;
     }
     
@@ -37,18 +38,34 @@ contract ToDoList {
         todo storage task = users[msg.sender][_taskind];
         return task;
     }*/
-
-    function updatetask(uint256 taskind, string calldata _desc, string calldata name) external  
+    
+    function updatetask(uint256 taskind, string calldata _desc, string calldata name) external
     {
+        if(taskind < arr.length)
+        {
         if(keccak256(abi.encodePacked(name)) != "")
            arr[taskind].task = name;
         if(keccak256(abi.encodePacked(_desc)) != "")
            arr[taskind].descrip = _desc;
+        
+        }
         //return mood;
     }
     
-    function deletetast(uint256 taskind) external
+    function deletetast(uint256 taskind) external 
     {
-        delete arr[taskind];
+        if(taskind < arr.length)
+           delete arr[taskind];
+    }
+
+    function gettotaltasks() external view returns (uint256)
+    {
+        return arr.length;
+    }
+
+    function printtask(uint256 taskin) external returns(todo memory)
+    {
+        todo storage tsk = arr[taskin];
+        return tsk;
     }
 }
